@@ -132,7 +132,7 @@ public class GoogleCastModule
                         Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
                         try {
                             convertedCustomData.put(pair.getKey(), pair.getValue());
-                        }catch (JSONException e) {
+                        } catch (JSONException e) {
                             Log.d("Google Cast", "Could not add key-value pair to JSON");
                         }
                         it.remove();
