@@ -78,6 +78,23 @@ RCT_EXPORT_MODULE();
 //  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
 }
 
+RCT_EXPORT_METHOD(getMediaStatus:(RCTPromiseResolveBlock)resolve rejecter:(__unused RCTPromiseRejectBlock)reject) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        GCKMediaStatus* mediaStatus = GCKCastContext.sharedInstance.sessionManager.currentSession.remoteMediaClient.mediaStatus;
+        if (mediaStatus) {
+          NSDictionary *status = @{
+            @"playerState": @(mediaStatus.playerState),
+            @"idleReason": @(mediaStatus.idleReason),
+            @"muted": @(mediaStatus.isMuted),
+            @"streamPosition": @(mediaStatus.streamPosition),
+          };
+          resolve(@{@"mediaStatus": status});
+        } else {
+          resolve(@{});
+        }
+    });
+}
+
 # pragma mark - GCKCastContext methods
 
 RCT_REMAP_METHOD(getCastState,
