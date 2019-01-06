@@ -297,25 +297,28 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     playbackStarted = false;
     playbackEnded = false;
   }
-    
-  NSDictionary *status = @{
-    @"playerState": @(mediaStatus.playerState),
-    @"idleReason": @(mediaStatus.idleReason),
-    @"muted": @(mediaStatus.isMuted),
-    @"streamPosition": @(mediaStatus.streamPosition),
-  };
+    if (mediaStatus) {
+      NSDictionary *status = @{
+        @"playerState": @(mediaStatus.playerState),
+        @"idleReason": @(mediaStatus.idleReason),
+        @"muted": @(mediaStatus.isMuted),
+        @"streamPosition": @(mediaStatus.streamPosition),
+      };
 
-  [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
+      [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
 
-  if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
-    [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
-    playbackStarted = true;
-  }
+      if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
+        [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
+        playbackStarted = true;
+      }
 
-  if (!playbackEnded && mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
-    [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
-    playbackEnded = true;
-  }
+      if (!playbackEnded && mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
+        [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
+        playbackEnded = true;
+      }
+    } else {
+         [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{}];
+    }
 }
 
 #pragma mark - GCKGenericChannelDelegate events
